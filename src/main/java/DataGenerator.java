@@ -7,8 +7,8 @@ import java.util.StringJoiner;
 class DataGenerator {
 
     private static final String MEMBER_FILE_NAME_FORMAT = "dummy/member/member_%d.sql";
-    private static final int COUNT_FILE = 100;
-    private static final int COUNT_MEMBER_PER_FILE = 1000000;
+    private static final int COUNT_FILE = 10;
+    private static final int COUNT_MEMBER_PER_FILE = 1_000_000;
 
     private final Random random = new Random();
 
@@ -19,7 +19,7 @@ class DataGenerator {
     }
 
     private void createFile(int i) {
-        String insertQuery = generateInsertQuery();
+        String insertQuery = generateInsertQuery(i);
         try {
             File file = new File(MEMBER_FILE_NAME_FORMAT.formatted(i));
             FileWriter writer = new FileWriter(file);
@@ -30,20 +30,20 @@ class DataGenerator {
         }
     }
 
-    private String generateInsertQuery() {
+    private String generateInsertQuery(int i) {
         String prefix = "INSERT INTO member (nickname, age, address)\n"
                 + "VALUES ";
         String suffix = ";";
         StringJoiner joiner = new StringJoiner(",\n", prefix, suffix);
-        for (int i = 1; i <= COUNT_MEMBER_PER_FILE; i++) {
-            joiner.add(generateInsertRow(i));
+        for (int j = 1; j <= COUNT_MEMBER_PER_FILE; j++) {
+            joiner.add(generateInsertRow(COUNT_MEMBER_PER_FILE * (i - 1) + j));
         }
         return joiner.toString();
     }
 
-    private String generateInsertRow(int i) {
-        String nickname = "사용자" + i;
-        int age = randomIntBetween(20, 60);
+    private String generateInsertRow(int id) {
+        String nickname = "사용자" + id;
+        int age = randomIntBetween(1, 100);
         String address = randomAddress();
         return "('%s', %d, '%s')".formatted(
                 nickname,
